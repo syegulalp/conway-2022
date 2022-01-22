@@ -7,3 +7,5 @@ Install requirements before doing anything else. A venv is recommended. Use `pyt
 Change into the `src` directory and run `conway.py` to see the demo.
 
 The numbers that pop up in the console during runtime are the average time taken by the program to compute a new generation of the playing field.
+
+License: MIT
