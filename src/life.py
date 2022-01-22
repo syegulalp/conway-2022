@@ -40,6 +40,7 @@ class Life:
     size: cython.int
     colors: cython.uchar[4][4]
 
+    @cython.cdivision(False)
     def __init__(self, width: cython.int, height: cython.int):
         index: cython.size_t = 0
         y: cython.int
