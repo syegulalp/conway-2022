@@ -1,5 +1,7 @@
 A simple example of Conway's Game Of Life, using Pyglet for visualization and Cython for speed.
 
+![](screenshot.png)
+
 This version uses Cython's "pure Python" syntax, so it can be run both with and without Cython compilation. This demonstrates clearly the difference in speed between regular Python and Cython.
 
 Install requirements before doing anything else. A venv is recommended. Use `python compile.py` to build the extension modules.
