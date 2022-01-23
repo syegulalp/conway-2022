@@ -5,3 +5,7 @@
 .vscode
 .venv
 src/build
+src/dist
+*.zip
+src/*.json
+debug.log
