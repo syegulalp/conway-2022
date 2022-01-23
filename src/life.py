@@ -21,9 +21,6 @@ else:
         return int(random() * 100)
 
 
-from typing import Union
-
-
 @cython.cfunc
 def ptr(arr_obj: arr.array) -> cython.p_char:
     array_ptr: cython.p_char = arr_obj.data.as_chars
@@ -127,7 +124,7 @@ class Life:
 
         if cython.compiled:
             world: cython.p_char = ptr(game.life[game.world])
-            imagebuffer: cython.p_char = cython.cast(cython.p_char, ptr(game.buffer))
+            imagebuffer: cython.p_char = ptr(game.buffer)
         else:
             world: arr.array = game.life[game.world]
             imagebuffer: arr.array = game.buffer
