@@ -66,7 +66,7 @@ class Life:
             self.lookupdata = arr.array("i", [0] * self.array_size)
 
         with cython.nogil:
-            for y in range(0, height):                
+            for y in range(0, height):
                 for x in range(0, width):
                     for y3 in range(y - 1, y + 2):
                         y3 = y3 % height
