@@ -134,12 +134,12 @@ class Life:
         color_byte: cython.size_t
         display_pos: cython.size_t
         world_value: cython.char
+        wv: cython.char
 
         with cython.nogil:
             for display_pos in range(0, display_size, 4):
                 world_value = world[world_pos]
+                wv = world_value + 1
                 for color_byte in range(0, 4):
-                    imagebuffer[display_pos + color_byte] = self.colors[
-                        world_value + 1
-                    ][color_byte]
+                    imagebuffer[display_pos + color_byte] = self.colors[wv][color_byte]
                 world_pos += 1
