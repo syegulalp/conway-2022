@@ -19,8 +19,9 @@ ext_modules = [
     Extension(
         "life",
         ["life.py"],
-        # NOTE: Omit /arch:AVX512 line if the module crashes.
+        # Use this line only if you're compiling with MSVC.
         extra_compile_args = ['/arch:AVX512', '/O2']
+        # Omit /arch:AVX512 line if the module crashes.
         # Use /MD for multithread DLL (not implemented yet)
     )
 ]
