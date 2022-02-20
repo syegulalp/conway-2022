@@ -1,2 +1,2 @@
 Cython>
-pyglet==2.0.dev5
+pyglet==2.0.dev7
