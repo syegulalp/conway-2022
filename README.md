@@ -12,4 +12,6 @@ The numbers that pop up in the console during runtime are the average time taken
 
 Th `src\life.py` file has some alternate rules for Life that can be uncommented and used in place of the existing rules.
 
+You can also edit the colors used to render the playing field by altering the values for `colors` in `src\conway.py`.
+
 License: MIT
