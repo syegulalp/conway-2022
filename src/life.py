@@ -113,10 +113,46 @@ class Life:
                     total += this_world[l[index]] > 0
                     index += 1
 
+                # Standard Life rules
+                
                 if this_world[position] > 0:
                     other_world[position] = 1 if 1 < total < 4 else -1
                 else:
                     other_world[position] = 2 if total == 3 else 0
+
+                # DotLife rules
+                # https://conwaylife.com/wiki/OCA:DotLife
+                
+                # if this_world[position] > 0:
+                #     other_world[position] = 2 if total < 1 or (total>1 and total<4) else -1
+                # else:
+                #     other_world[position] = 1 if total == 3 else 0
+
+                # HighLife
+                # https://conwaylife.com/wiki/OCA:HighLife
+
+                # if this_world[position] > 0:
+                #     other_world[position] = 2 if (total>1 and total<4) else -1
+                # else:
+                #     other_world[position] = 1 if (total == 3 or total==6) else 0
+
+                # LowDeath
+                # https://conwaylife.com/wiki/OCA:LowDeath
+
+                # if this_world[position] > 0:
+                #     other_world[position] = 2 if (total>1 and total<4) or (total==2) else -1
+                # else:
+                #     other_world[position] = 1 if (total == 3 or total==6 or total==8) else 0
+
+                # Pedestrian Life
+                # https://conwaylife.com/wiki/OCA:Pedestrian_Life
+
+                # if this_world[position] > 0:
+                #     other_world[position] = 2 if (total>1 and total<4) else -1
+                # else:
+                #     other_world[position] = 1 if (total == 3 or total==8) else 0
+
+
 
         game.world = not game.world
 
