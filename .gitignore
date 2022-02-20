@@ -4,6 +4,7 @@
 **/__pycache__
 .vscode
 .venv
+.env*
 src/build
 src/dist
 *.zip

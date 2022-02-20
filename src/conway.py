@@ -11,8 +11,8 @@ import pyglet
 pyglet.options["debug_gl"] = False
 pyglet.image.Texture.default_mag_filter = pyglet.gl.GL_NEAREST
 
-from timer import Timer
-from life import Life
+from .timer import Timer
+from .life import Life
 
 
 class MyWindow(pyglet.window.Window):
