@@ -1,6 +1,7 @@
-WIDTH = 200
+WIDTH = 300
 HEIGHT = 200
-ZOOM = 5
+
+ZOOM = 3.5
 FRAMERATE = 30
 
 import ctypes
@@ -9,16 +10,30 @@ import array
 import pyglet
 
 pyglet.options["debug_gl"] = False
+pyglet.options["shadow_window"] = False
+pyglet.options["vsync"] = False
 pyglet.image.Texture.default_mag_filter = pyglet.gl.GL_NEAREST
 
 from .timer import Timer
 from .life import Life
 
+colors = [
+    [255, 0, 0, 255],
+    [0, 0, 0, 255],
+    [0, 255, 0, 255],
+    [0, 0, 255, 255],
+]
+
 
 class MyWindow(pyglet.window.Window):
     def __init__(self, *a, **ka):
-        super().__init__(*a, **ka)
-        self.game_obj = Life(WIDTH, HEIGHT)
+        super().__init__(*a, visible=False, **ka)
+        self.game_obj = Life(WIDTH, HEIGHT, colors)
+
+        self.set_location(
+            self.screen.width // 2 - self.width // 2,
+            self.screen.height // 2 - self.height // 2,
+        )
 
         self.batch = pyglet.graphics.Batch()
         self.texture = pyglet.image.Texture.create(WIDTH, HEIGHT)
@@ -58,6 +73,7 @@ class MyWindow(pyglet.window.Window):
         print("New generation / Display rendering / Draw")
 
         self.running = True
+        self.set_visible()
 
     def get_avg(self, *a):
         print(self.life_timer.avg, self.render_timer.avg, self.draw_timer.avg)
@@ -84,6 +100,8 @@ class MyWindow(pyglet.window.Window):
         return super().on_key_press(symbol, modifiers)
 
     def run(self, *a):
+        # colors.insert(2, colors.pop())
+        # self.game_obj.set_colors(colors)
         with self.life_timer:
             self.game_obj.generation(self)
 
@@ -101,14 +119,14 @@ class MyWindow(pyglet.window.Window):
         self.invalid = False
         with self.draw_timer:
             pyglet.gl.glViewport(
-                0, 0, WIDTH * (self.zoom ** 2), HEIGHT * (self.zoom ** 2)
+                0, 0, int(WIDTH * (self.zoom**2)), int(HEIGHT * (self.zoom**2))
             )
             self.clear()
             self.batch.draw()
 
 
 def main():
-    w = MyWindow(WIDTH * ZOOM, HEIGHT * ZOOM)
+    w = MyWindow(int(WIDTH * ZOOM), int(HEIGHT * ZOOM))
     import gc
 
     try:
