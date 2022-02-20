@@ -37,8 +37,11 @@ class Life:
     size: cython.int
     colors: cython.uchar[4][4]
 
+    def set_colors(self, colors: list):
+        self.colors = colors
+
     @cython.cdivision(False)
-    def __init__(self, width: cython.int, height: cython.int):
+    def __init__(self, width: cython.int, height: cython.int, colors:list):
         index: cython.size_t = 0
         y: cython.int
         x: cython.int
@@ -46,13 +49,8 @@ class Life:
         x3: cython.int
         y4: cython.int
 
-        self.colors = [
-            [255, 0, 0, 255],
-            [0, 0, 0, 255],
-            [0, 255, 0, 255],
-            [0, 0, 255, 255],
-        ]
-
+        self.set_colors(colors)
+       
         self.height = height
         self.width = width
         self.size = height * width
@@ -72,7 +70,7 @@ class Life:
                         y3 = y3 % height
                         y4 = y3 * width
                         for x3 in range(x - 1, x + 2):
-                            x3 = x3 % height
+                            x3 = x3 % width
                             if x3 == x and y3 == y:
                                 continue
                             self.lookupdata[index] = y4 + x3
