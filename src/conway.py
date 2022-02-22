@@ -119,8 +119,12 @@ class MyWindow(pyglet.window.Window):
             global colors
             colors = (colors + direction) % len(all_colors)
             self.game_obj.set_colors(all_colors[colors])
+            if not self.running:
+                self.on_draw()
         if symbol == 32:
             self.game_obj.randomize(self, FACTOR)
+            if not self.running:
+                self.run()
         if self.running:
             if symbol == 112 or symbol == 46:
                 self.running = not self.running
@@ -137,6 +141,10 @@ class MyWindow(pyglet.window.Window):
     def run(self, *a):
         with self.life_timer:
             self.game_obj.generation(self)
+        self.invalid = True
+
+    def on_draw(self):
+        self.invalid = False
 
         with self.render_timer:
             self.game_obj.render(self)
@@ -145,11 +153,7 @@ class MyWindow(pyglet.window.Window):
             0,
             0,
             0,
-        )
-        self.invalid = True
-
-    def on_draw(self):
-        self.invalid = False
+        )        
         with self.draw_timer:
             pyglet.gl.glViewport(
                 0, 0, int(WIDTH * (self.zoom**2)), int(HEIGHT * (self.zoom**2))
