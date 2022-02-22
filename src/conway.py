@@ -39,7 +39,28 @@ rainbow_colors = [
     [0, 0, 255, 255],
 ]
 
-all_colors = [basic, green_shades, rainbow_colors]
+cga1 = [
+    [255, 85, 85, 255],
+    [0, 0, 0, 255],
+    [85, 255, 255, 255],
+    [255, 255, 255, 255],
+]
+
+cga2 = [
+    [85, 255, 255, 255],
+    [0, 0, 0, 255],
+    [255, 85, 255, 255],
+    [255, 255, 255, 255],
+]
+
+cga3 = [
+    [255, 85, 85, 255],
+    [0, 0, 0, 255],
+    [85, 255, 85, 255],
+    [255, 255, 85, 255],
+]
+
+all_colors = [basic, green_shades, rainbow_colors, cga1, cga2, cga3]
 
 colors = 0
 
@@ -153,7 +174,7 @@ class MyWindow(pyglet.window.Window):
             0,
             0,
             0,
-        )        
+        )
         with self.draw_timer:
             pyglet.gl.glViewport(
                 0, 0, int(WIDTH * (self.zoom**2)), int(HEIGHT * (self.zoom**2))
