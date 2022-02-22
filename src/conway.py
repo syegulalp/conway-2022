@@ -3,6 +3,7 @@ HEIGHT = 200
 
 ZOOM = 3.5
 FRAMERATE = 30
+FACTOR = 5
 
 import ctypes
 import array
@@ -17,18 +18,36 @@ pyglet.image.Texture.default_mag_filter = pyglet.gl.GL_NEAREST
 from .timer import Timer
 from .life import Life
 
-colors = [
+basic = [
+    [0, 0, 0, 255],
+    [0, 0, 0, 255],
+    [255, 255, 255, 255],
+    [255, 255, 255, 255],
+]
+
+green_shades = [
+    [0, 31, 0, 255],
+    [0, 0, 0, 255],
+    [0, 127, 0, 255],
+    [0, 255, 0, 255],
+]
+
+rainbow_colors = [
     [255, 0, 0, 255],
     [0, 0, 0, 255],
     [0, 255, 0, 255],
     [0, 0, 255, 255],
 ]
 
+all_colors = [basic, green_shades, rainbow_colors]
+
+colors = 0
+
 
 class MyWindow(pyglet.window.Window):
     def __init__(self, *a, **ka):
-        super().__init__(*a, visible=False, **ka)
-        self.game_obj = Life(WIDTH, HEIGHT, colors)
+        super().__init__(*a, **ka)
+        self.game_obj = Life(WIDTH, HEIGHT, all_colors[colors])
 
         self.set_location(
             self.screen.width // 2 - self.width // 2,
@@ -59,7 +78,7 @@ class MyWindow(pyglet.window.Window):
 
         self.world = 0
 
-        self.game_obj.randomize(self, 5)
+        self.game_obj.randomize(self, FACTOR)
 
         self.life_timer = Timer()
         self.render_timer = Timer()
@@ -73,7 +92,6 @@ class MyWindow(pyglet.window.Window):
         print("New generation / Display rendering / Draw")
 
         self.running = True
-        self.set_visible()
 
     def get_avg(self, *a):
         print(self.life_timer.avg, self.render_timer.avg, self.draw_timer.avg)
@@ -84,14 +102,31 @@ class MyWindow(pyglet.window.Window):
             _.y = (_.y + (dy / ZOOM)) % (HEIGHT * 2) - HEIGHT
 
     def on_key_press(self, symbol, modifiers):
+        print(symbol, modifiers)
+        if 49 <= symbol <= 57:
+            if modifiers == 1:
+                global FACTOR
+                FACTOR = symbol - 48
+            else:
+                global FRAMERATE
+                FRAMERATE = (symbol - 48) * 3
+                if self.running:
+                    pyglet.clock.unschedule(self.run)
+                    pyglet.clock.schedule_interval(self.run, 1 / FRAMERATE)
+
+        if symbol in (91, 93):
+            direction = symbol - 92
+            global colors
+            colors = (colors + direction) % len(all_colors)
+            self.game_obj.set_colors(all_colors[colors])
+        if symbol == 32:
+            self.game_obj.randomize(self, FACTOR)
         if self.running:
-            if symbol == 112:
+            if symbol == 112 or symbol == 46:
                 self.running = not self.running
                 pyglet.clock.unschedule(self.run)
-            if symbol == 32:
-                self.game_obj.randomize(self, 5)
         else:
-            if symbol == 32:
+            if symbol == 46:
                 self.run()
             elif symbol == 112:
                 self.running = not self.running
@@ -100,8 +135,6 @@ class MyWindow(pyglet.window.Window):
         return super().on_key_press(symbol, modifiers)
 
     def run(self, *a):
-        # colors.insert(2, colors.pop())
-        # self.game_obj.set_colors(colors)
         with self.life_timer:
             self.game_obj.generation(self)
 

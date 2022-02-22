@@ -41,7 +41,7 @@ class Life:
         self.colors = colors
 
     @cython.cdivision(False)
-    def __init__(self, width: cython.int, height: cython.int, colors:list):
+    def __init__(self, width: cython.int, height: cython.int, colors: list):
         index: cython.size_t = 0
         y: cython.int
         x: cython.int
@@ -50,7 +50,7 @@ class Life:
         y4: cython.int
 
         self.set_colors(colors)
-       
+
         self.height = height
         self.width = width
         self.size = height * width
@@ -112,7 +112,7 @@ class Life:
                     index += 1
 
                 # Standard Life rules
-                
+
                 if this_world[position] > 0:
                     other_world[position] = 1 if 1 < total < 4 else -1
                 else:
@@ -120,7 +120,7 @@ class Life:
 
                 # DotLife rules
                 # https://conwaylife.com/wiki/OCA:DotLife
-                
+
                 # if this_world[position] > 0:
                 #     other_world[position] = 1 if total < 1 or (total>1 and total<4) else -1
                 # else:
@@ -150,7 +150,25 @@ class Life:
                 # else:
                 #     other_world[position] = 2 if (total == 3 or total==8) else 0
 
+                # 2x2
+                # if this_world[position] > 0:
+                #     other_world[position] = 1 if (total==1 or total == 2 or total == 5 ) else -1
+                # else:
+                #     other_world[position] = 2 if (total == 3 or total==6) else 0
 
+                # Diamoeba
+                # if this_world[position] > 0:
+                #     other_world[position] = 1 if (total>=5 and total <= 8 ) else -1
+                # else:
+                #     other_world[position] = 2 if (total == 3 or (total>=5 and total <=8)) else 0
+
+                # HoneyLife
+                # if this_world[position] > 0:
+                #     other_world[position] = (
+                #         1 if (total == 2 or total == 3 or total == 8) else -1
+                #     )
+                # else:
+                #     other_world[position] = 2 if (total == 3 or total == 8) else 0
 
         game.world = not game.world
 

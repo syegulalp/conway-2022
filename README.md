@@ -8,6 +8,18 @@ Install requirements before doing anything else. A venv is recommended. Use `pyt
 
 Run `life.py` from the root directory to execute the demo.
 
+Click and drag within the window to move the view around.
+
+Use the `[` and `]` keys to change color palettes.
+
+Press `p` to pause and unpause; press `.` to single-step.
+
+Press `1` through `9` to alter the speed of the simulation. The maximum speed is the `FRAMERATE` variable in `conway.py`.
+
+Press `Space` to randomize the playing field.
+
+Press `Shift-1` through `Shift-9` to alter the factor for randomization.
+
 The numbers that pop up in the console during runtime are:
 * the average time taken by the program to compute a new generation of the playing field
 * time to render the results to the buffer
