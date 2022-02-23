@@ -135,14 +135,14 @@ class MyWindow(pyglet.window.Window):
                     pyglet.clock.unschedule(self.run)
                     pyglet.clock.schedule_interval(self.run, 1 / FRAMERATE)
 
-        if symbol in (91, 93):
+        elif symbol in (91, 93):
             direction = symbol - 92
             global colors
             colors = (colors + direction) % len(all_colors)
             self.game_obj.set_colors(all_colors[colors])
             if not self.running:
                 self.on_draw()
-        if symbol == 32:
+        elif symbol == 32:
             self.game_obj.randomize(self, FACTOR)
             if not self.running:
                 self.run()
