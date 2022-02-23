@@ -127,11 +127,11 @@ class MyWindow(pyglet.window.Window):
 
     def on_key_press(self, symbol, modifiers):
         print(symbol, modifiers)
-        if 48 <= symbol <= 57:
+        if 49 <= symbol <= 57:
             if modifiers == 1:
                 self.randomization_factor = symbol - 48
             else:
-                self.framerate = (symbol - 47) * 3
+                self.framerate = (symbol - 48) * 3
                 if self.running:
                     pyglet.clock.unschedule(self.run)
                     pyglet.clock.schedule_interval(self.run, 1 / self.framerate)
