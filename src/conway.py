@@ -70,6 +70,9 @@ class MyWindow(pyglet.window.Window):
         super().__init__(*a, **ka)
         self.game_obj = Life(WIDTH, HEIGHT, all_colors[colors])
 
+        self.framerate = FRAMERATE
+        self.randomization_factor = FACTOR
+
         self.set_location(
             self.screen.width // 2 - self.width // 2,
             self.screen.height // 2 - self.height // 2,
@@ -99,7 +102,7 @@ class MyWindow(pyglet.window.Window):
 
         self.world = 0
 
-        self.game_obj.randomize(self, FACTOR)
+        self.game_obj.randomize(self, self.randomization_factor)
 
         self.life_timer = Timer()
         self.render_timer = Timer()
@@ -107,7 +110,7 @@ class MyWindow(pyglet.window.Window):
 
         self.zoom = ZOOM
 
-        pyglet.clock.schedule_interval(self.run, 1 / FRAMERATE)
+        pyglet.clock.schedule_interval(self.run, 1 / self.framerate)
         pyglet.clock.schedule_interval(self.get_avg, 1.0)
 
         print("New generation / Display rendering / Draw")
@@ -119,21 +122,19 @@ class MyWindow(pyglet.window.Window):
 
     def on_mouse_drag(self, x, y, dx, dy, *a):
         for _ in self.sprites:
-            _.x = (_.x + (dx / ZOOM)) % (WIDTH * 2) - WIDTH
-            _.y = (_.y + (dy / ZOOM)) % (HEIGHT * 2) - HEIGHT
+            _.x = (_.x + (dx / self.zoom)) % (WIDTH * 2) - WIDTH
+            _.y = (_.y + (dy / self.zoom)) % (HEIGHT * 2) - HEIGHT
 
     def on_key_press(self, symbol, modifiers):
         print(symbol, modifiers)
         if 48 <= symbol <= 57:
             if modifiers == 1:
-                global FACTOR
-                FACTOR = symbol - 48
+                self.randomization_factor = symbol - 48
             else:
-                global FRAMERATE
-                FRAMERATE = (symbol - 47) * 3
+                self.framerate = (symbol - 47) * 3
                 if self.running:
                     pyglet.clock.unschedule(self.run)
-                    pyglet.clock.schedule_interval(self.run, 1 / FRAMERATE)
+                    pyglet.clock.schedule_interval(self.run, 1 / self.framerate)
 
         elif symbol in (91, 93):
             direction = symbol - 92
@@ -143,7 +144,7 @@ class MyWindow(pyglet.window.Window):
             if not self.running:
                 self.on_draw()
         elif symbol == 32:
-            self.game_obj.randomize(self, FACTOR)
+            self.game_obj.randomize(self, self.randomization_factor)
             if not self.running:
                 self.run()
         if self.running:
@@ -155,7 +156,7 @@ class MyWindow(pyglet.window.Window):
                 self.run()
             elif symbol == 112:
                 self.running = not self.running
-                pyglet.clock.schedule_interval(self.run, 1 / FRAMERATE)
+                pyglet.clock.schedule_interval(self.run, 1 / self.framerate)
 
         return super().on_key_press(symbol, modifiers)
 
