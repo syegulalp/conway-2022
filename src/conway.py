@@ -62,13 +62,13 @@ cga3 = [
 
 all_colors = [basic, green_shades, rainbow_colors, cga1, cga2, cga3]
 
-colors = 0
-
 
 class MyWindow(pyglet.window.Window):
     def __init__(self, *a, **ka):
         super().__init__(*a, **ka)
-        self.game_obj = Life(WIDTH, HEIGHT, all_colors[colors])
+
+        self.colors = 0
+        self.game_obj = Life(WIDTH, HEIGHT, all_colors[self.colors])
 
         self.framerate = FRAMERATE
         self.randomization_factor = FACTOR
@@ -138,9 +138,8 @@ class MyWindow(pyglet.window.Window):
 
         elif symbol in (91, 93):
             direction = symbol - 92
-            global colors
-            colors = (colors + direction) % len(all_colors)
-            self.game_obj.set_colors(all_colors[colors])
+            self.colors = (self.colors + direction) % len(all_colors)
+            self.game_obj.set_colors(all_colors[self.colors])
             if not self.running:
                 self.on_draw()
         elif symbol == 32:
