@@ -124,13 +124,13 @@ class MyWindow(pyglet.window.Window):
 
     def on_key_press(self, symbol, modifiers):
         print(symbol, modifiers)
-        if 49 <= symbol <= 57:
+        if 48 <= symbol <= 57:
             if modifiers == 1:
                 global FACTOR
                 FACTOR = symbol - 48
             else:
                 global FRAMERATE
-                FRAMERATE = (symbol - 48) * 3
+                FRAMERATE = (symbol - 47) * 3
                 if self.running:
                     pyglet.clock.unschedule(self.run)
                     pyglet.clock.schedule_interval(self.run, 1 / FRAMERATE)
