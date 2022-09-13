@@ -65,7 +65,7 @@ all_colors = [basic, green_shades, rainbow_colors, cga1, cga2, cga3]
 
 class MyWindow(pyglet.window.Window):
     def __init__(self, *a, **ka):
-        super().__init__(*a, **ka)
+        super().__init__(*a, visible=False, **ka)
 
         self.colors = 0
         self.game_obj = Life(WIDTH, HEIGHT, all_colors[self.colors])
@@ -113,12 +113,15 @@ class MyWindow(pyglet.window.Window):
         pyglet.clock.schedule_interval(self.run, 1 / self.framerate)
         pyglet.clock.schedule_interval(self.get_avg, 1.0)
 
-        print("New generation / Display rendering / Draw")
+        print("New generation / Display rendering / Draw / Framerate")
 
         self.running = True
+        self.set_visible(True)
 
     def get_avg(self, *a):
-        print(self.life_timer.avg, self.render_timer.avg, self.draw_timer.avg)
+        print(
+            f"{self.life_timer.avg:.7f} {self.render_timer.avg:.7f} {self.draw_timer.avg:.7f} {((1/60)/self.life_timer.avg)*60:.2f}"
+        )
 
     def on_mouse_drag(self, x, y, dx, dy, *a):
         for _ in self.sprites:
@@ -127,11 +130,11 @@ class MyWindow(pyglet.window.Window):
 
     def on_key_press(self, symbol, modifiers):
         print(symbol, modifiers)
-        if 48 <= symbol <= 57:
+        if 49 <= symbol <= 57:
             if modifiers == 1:
                 self.randomization_factor = symbol - 48
             else:
-                self.framerate = (symbol - 47) * 3
+                self.framerate = (symbol - 48) * 3
                 if self.running:
                     pyglet.clock.unschedule(self.run)
                     pyglet.clock.schedule_interval(self.run, 1 / self.framerate)
