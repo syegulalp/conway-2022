@@ -2,7 +2,7 @@ WIDTH = 300
 HEIGHT = 200
 
 ZOOM = 3.5
-FRAMERATE = 30
+FRAMERATE = 60
 FACTOR = 5
 
 import ctypes
@@ -130,11 +130,11 @@ class MyWindow(pyglet.window.Window):
 
     def on_key_press(self, symbol, modifiers):
         print(symbol, modifiers)
-        if 49 <= symbol <= 57:
+        if 48 <= symbol <= 57:
             if modifiers == 1:
                 self.randomization_factor = symbol - 48
             else:
-                self.framerate = (symbol - 48) * 3
+                self.framerate = int(((symbol - 47) / 10) * FRAMERATE)
                 if self.running:
                     pyglet.clock.unschedule(self.run)
                     pyglet.clock.schedule_interval(self.run, 1 / self.framerate)
@@ -191,7 +191,7 @@ def main():
     import gc
 
     try:
-        ctypes.windll.winmm.timeBeginPeriod(2)
+        ctypes.windll.winmm.timeBeginPeriod(1)
     except:
         pass
     gc.freeze()
