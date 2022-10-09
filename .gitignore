@@ -10,3 +10,8 @@ dist
 *.zip
 *.json
 debug.log
+avx.txt
+devreqs.txt
+pack.bat
+runpack.bat
+trace.dat
