@@ -1,66 +1,17 @@
-WIDTH = 300
-HEIGHT = 200
-
-ZOOM = 3.5
-FRAMERATE = 60
-FACTOR = 5
-
-import ctypes
-import array
-
 import pyglet
 
 pyglet.options["debug_gl"] = False
 pyglet.options["shadow_window"] = False
-pyglet.options["vsync"] = False
+pyglet.options["vsync"] = True
 pyglet.image.Texture.default_mag_filter = pyglet.gl.GL_NEAREST
 
 from .timer import Timer
 from .life import Life
+from .constants import *
+from .colors import *
 
-basic = [
-    [0, 0, 0, 255],
-    [0, 0, 0, 255],
-    [255, 255, 255, 255],
-    [255, 255, 255, 255],
-]
-
-green_shades = [
-    [0, 31, 0, 255],
-    [0, 0, 0, 255],
-    [0, 127, 0, 255],
-    [0, 255, 0, 255],
-]
-
-rainbow_colors = [
-    [255, 0, 0, 255],
-    [0, 0, 0, 255],
-    [0, 255, 0, 255],
-    [0, 0, 255, 255],
-]
-
-cga1 = [
-    [255, 85, 85, 255],
-    [0, 0, 0, 255],
-    [85, 255, 255, 255],
-    [255, 255, 255, 255],
-]
-
-cga2 = [
-    [85, 255, 255, 255],
-    [0, 0, 0, 255],
-    [255, 85, 255, 255],
-    [255, 255, 255, 255],
-]
-
-cga3 = [
-    [255, 85, 85, 255],
-    [0, 0, 0, 255],
-    [85, 255, 85, 255],
-    [255, 255, 85, 255],
-]
-
-all_colors = [basic, green_shades, rainbow_colors, cga1, cga2, cga3]
+import ctypes
+import array
 
 
 class MyWindow(pyglet.window.Window):

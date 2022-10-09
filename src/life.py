@@ -48,6 +48,7 @@ class Life:
         y3: cython.int
         x3: cython.int
         y4: cython.int
+        skip: cython.int
 
         self.set_colors(colors)
 
@@ -66,13 +67,15 @@ class Life:
         with cython.nogil:
             for y in range(0, height):
                 for x in range(0, width):
+                    skip = 0
                     for y3 in range(y - 1, y + 2):
                         y3 = y3 % height
                         y4 = y3 * width
                         for x3 in range(x - 1, x + 2):
-                            x3 = x3 % width
-                            if x3 == x and y3 == y:
+                            skip += 1
+                            if skip == 5:
                                 continue
+                            x3 = x3 % width
                             self.lookupdata[index] = y4 + x3
                             index += 1
 
@@ -93,6 +96,7 @@ class Life:
     def generation(self, game):
         total: cython.int
         x: cython.int
+        neighbor: cython.int
         index: cython.size_t = 0
 
         if cython.compiled:
