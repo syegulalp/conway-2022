@@ -15,3 +15,4 @@ devreqs.txt
 pack.bat
 runpack.bat
 trace.dat
+**/*.egg-info

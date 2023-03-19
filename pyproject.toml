@@ -1,0 +1,7 @@
+[project]
+name="conway-2023"
+version="0.2023"
+dependencies = ["pyglet"]
+
+[project.optional-dependencies]
+dev = ["black", "cython ~=3.0.0b1"]
