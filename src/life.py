@@ -36,12 +36,13 @@ class Life:
     display_size: cython.int
     size: cython.int
     colors: cython.uchar[4][4]
+    rules: cython.int[9][2]
 
     def set_colors(self, colors: list):
         self.colors = colors
 
     @cython.cdivision(False)
-    def __init__(self, width: cython.int, height: cython.int, colors: list):
+    def __init__(self, width: cython.int, height: cython.int, colors: list, rules):
         index: cython.size_t = 0
         y: cython.int
         x: cython.int
@@ -51,6 +52,12 @@ class Life:
         skip: cython.int
 
         self.set_colors(colors)
+
+        if cython.compiled:
+            self.rules[0][:] = rules[0][:]
+            self.rules[1][:] = rules[1][:]
+        else:
+            self.rules = rules
 
         self.height = height
         self.width = width
@@ -107,6 +114,9 @@ class Life:
             other_world: arr.array = game.life[not game.world]
 
         l = self.lookupdata
+        position: cython.int
+
+        rules = self.rules
 
         with cython.nogil:
             for position in range(0, self.size):
@@ -115,69 +125,11 @@ class Life:
                     total += this_world[l[index]] > 0
                     index += 1
 
-                # Standard Life rules
-
-                if this_world[position] > 0:
-                    other_world[position] = 1 if 1 < total < 4 else -1
-                else:
-                    other_world[position] = 2 if total == 3 else 0
-
-                # DotLife rules
-                # https://conwaylife.com/wiki/OCA:DotLife
-
-                # if this_world[position] > 0:
-                #     other_world[position] = 1 if total < 1 or (total>1 and total<4) else -1
-                # else:
-                #     other_world[position] = 2 if total == 3 else 0
-
-                # HighLife
-                # https://conwaylife.com/wiki/OCA:HighLife
-
-                # if this_world[position] > 0:
-                #     other_world[position] = 1 if (total>1 and total<4) else -1
-                # else:
-                #     other_world[position] = 2 if (total == 3 or total==6) else 0
-
-                # LowDeath
-                # https://conwaylife.com/wiki/OCA:LowDeath
-
-                # if this_world[position] > 0:
-                #     other_world[position] = 1 if (total>1 and total<4) or (total==2) else -1
-                # else:
-                #     other_world[position] = 2 if (total == 3 or total==6 or total==8) else 0
-
-                # Pedestrian Life
-                # https://conwaylife.com/wiki/OCA:Pedestrian_Life
-
-                # if this_world[position] > 0:
-                #     other_world[position] = 1 if (total>1 and total<4) else -1
-                # else:
-                #     other_world[position] = 2 if (total == 3 or total==8) else 0
-
-                # 2x2
-                # if this_world[position] > 0:
-                #     other_world[position] = 1 if (total==1 or total == 2 or total == 5 ) else -1
-                # else:
-                #     other_world[position] = 2 if (total == 3 or total==6) else 0
-
-                # Diamoeba
-                # if this_world[position] > 0:
-                #     other_world[position] = 1 if (total>=5 and total <= 8 ) else -1
-                # else:
-                #     other_world[position] = 2 if (total == 3 or (total>=5 and total <=8)) else 0
-
-                # HoneyLife
-                # if this_world[position] > 0:
-                #     other_world[position] = (
-                #         1 if (total == 2 or total == 3 or total == 8) else -1
-                #     )
-                # else:
-                #     other_world[position] = 2 if (total == 3 or total == 8) else 0
+                other_world[position] = rules[this_world[position] > 0][total]
 
         game.world = not game.world
 
     def render(self, game):
-
         if cython.compiled:
             world: cython.p_char = ptr(game.life[game.world])
             imagebuffer: cython.p_char = ptr(game.buffer)

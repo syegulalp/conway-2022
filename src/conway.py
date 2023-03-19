@@ -12,14 +12,52 @@ from .colors import *
 
 import ctypes
 import array
+import sys
+
+rules = {
+    "life": [[0, 0, 0, 2, 0, 0, 0, 0, 0], [-1, -1, 1, 1, -1, -1, -1, -1, -1]],
+    "highlife": [[0, 0, 0, 2, 0, 0, 2, 0, 0], [-1, -1, 1, 1, -1, -1, -1, -1, -1]],
+    "dotlife": [[0, 0, 0, 2, 0, 0, 2, 0, 0], [1, 0, 1, 1, -1, -1, -1, -1, -1]],
+    "lowdeath": [
+        [0, 0, 0, 2, 0, 0, 2, 0, 2],
+        [-1, -1, 1, 1, 1, -1, -1, -1, -1],
+    ],
+    "pedestrian": [[0, 0, 0, 2, 0, 0, 0, 0, 2], [-1, -1, 1, 1, -1, -1, -1, -1, -1]],
+    "2x2": [[0, 0, 0, 2, 0, 0, 2, 0, 0], [-1, 1, 1, -1, -1, 1, -1, -1, -1]],
+    "diamoeba": [[0, 0, 0, 2, 0, 2, 2, 2, 2], [-1, 1, -1, -1, -1, 1, 1, 1, 1]],
+    "honey": [[0, 0, 0, 2, 0, 0, 0, 0, 2], [-1, -1, 1, 1, -1, -1, -1, -1, 1]],
+}
 
 
 class MyWindow(pyglet.window.Window):
     def __init__(self, *a, **ka):
         super().__init__(*a, visible=False, **ka)
 
+        self.rule_descriptions = list(rules.keys())
+
+        rule_name = None
+
+        try:
+            rule_switch = sys.argv.index("-r")
+        except ValueError:
+            pass
+        else:
+            try:
+                rule_name = sys.argv[rule_switch + 1]
+            except IndexError:
+                pass
+
+        if rule_name not in rules:
+            print(rule_name, "not found. Valid rules:")
+            print(" | ".join(self.rule_descriptions))
+            rule_name = "life"
+
+        rule_set = rules[rule_name]
+
+        self.rule_name = rule_name
+
         self.colors = 0
-        self.game_obj = Life(WIDTH, HEIGHT, all_colors[self.colors])
+        self.game_obj = Life(WIDTH, HEIGHT, all_colors[self.colors], rule_set)
 
         self.framerate = FRAMERATE
         self.randomization_factor = FACTOR
@@ -30,26 +68,34 @@ class MyWindow(pyglet.window.Window):
         )
 
         self.batch = pyglet.graphics.Batch()
+        self.text_batch = pyglet.graphics.Batch()
         self.texture = pyglet.image.Texture.create(WIDTH, HEIGHT)
+
+        self.label = pyglet.text.Label(
+            "",
+            x=8,
+            y=self.height - 8,
+            anchor_x="left",
+            anchor_y="top",
+            multiline=True,
+            width=self.width // 2,
+            batch=self.text_batch,
+            color=(255, 255, 0, 255),
+        )
 
         self.life = [array.array("b", b"\x00" * WIDTH * HEIGHT) for _ in range(2)]
         self.buffer = array.array("B", b"\x00" * WIDTH * HEIGHT * 4)
 
         self.sprites = []
         for _ in range(4):
-            self.sprites.append(
-                pyglet.sprite.Sprite(
-                    self.texture,
-                    0,
-                    0,
-                    batch=self.batch,
-                )
-            )
+            sprite = pyglet.sprite.Sprite(self.texture, 0, 0, batch=self.batch)
+            sprite.scale = ZOOM
+            self.sprites.append(sprite)
 
-        self.sprites[1].x = -WIDTH
-        self.sprites[2].x = WIDTH
-        self.sprites[2].y = HEIGHT
-        self.sprites[3].y = -HEIGHT
+        self.sprites[1].x = -WIDTH * ZOOM
+        self.sprites[2].x = -WIDTH * ZOOM
+        self.sprites[2].y = -HEIGHT * ZOOM
+        self.sprites[3].y = -HEIGHT * ZOOM
 
         self.world = 0
 
@@ -64,24 +110,33 @@ class MyWindow(pyglet.window.Window):
         pyglet.clock.schedule_interval(self.run, 1 / self.framerate)
         pyglet.clock.schedule_interval(self.get_avg, 1.0)
 
-        print("New generation / Display rendering / Draw / Framerate")
+        self.label.text = f"Rule set: {self.rule_name}"
 
         self.running = True
         self.set_visible(True)
 
     def get_avg(self, *a):
-        print(
-            f"{self.life_timer.avg:.7f} {self.render_timer.avg:.7f} {self.draw_timer.avg:.7f} {((1/60)/self.life_timer.avg)*60:.2f}"
+        self.label.text = (
+            f"Rule set: {self.rule_name}\n"
+            f"New generation: {self.life_timer.avg:.7f}\n"
+            f"Display rendering time: {self.render_timer.avg:.7f}\n"
+            f"Draw time: {self.draw_timer.avg:.7f}\n"
+            f"Framerate: {((1/60)/self.life_timer.avg)*60:.2f}\n\n"
+            "Click and drag in window to reposition\nTab: toggle HUD\n0-9: alter generation speed\n"
+            "Space: randomize field\np: Pause/unpause\n[ or ]: switch color palette\n\n"
+            f"Rules: {' | '.join(self.rule_descriptions)}"
         )
 
     def on_mouse_drag(self, x, y, dx, dy, *a):
         for _ in self.sprites:
-            _.x = (_.x + (dx / self.zoom)) % (WIDTH * 2) - WIDTH
-            _.y = (_.y + (dy / self.zoom)) % (HEIGHT * 2) - HEIGHT
+            _.x = ((_.x + dx) % (WIDTH * ZOOM * 2)) - WIDTH * ZOOM
+            _.y = ((_.y + dy) % (HEIGHT * ZOOM * 2)) - HEIGHT * ZOOM
 
     def on_key_press(self, symbol, modifiers):
         print(symbol, modifiers)
-        if 48 <= symbol <= 57:
+        if symbol == 65289:
+            self.label.visible = not self.label.visible
+        elif 48 <= symbol <= 57:
             if modifiers == 1:
                 self.randomization_factor = symbol - 48
             else:
@@ -130,11 +185,9 @@ class MyWindow(pyglet.window.Window):
             0,
         )
         with self.draw_timer:
-            pyglet.gl.glViewport(
-                0, 0, int(WIDTH * (self.zoom**2)), int(HEIGHT * (self.zoom**2))
-            )
             self.clear()
             self.batch.draw()
+            self.text_batch.draw()
 
 
 def main():
